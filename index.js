@@ -22,24 +22,24 @@ wss.on('connection', function (ws) {
     }, 100);
     console.log('started client interval');
 
-    // ws.on('message', (message) => {
-    //     const data = JSON.parse(message);
+    ws.on('message', (message) => {
+        const data = JSON.parse(message);
 
-    //     // If the message contains only the workspace_id, set it for the client
-    //     if (data.workspace_id && !data.text) {
-    //         ws.workspaceId = data.workspace_id;
-    //     } else {
-    //         const workspaceId = ws.workspaceId;
-    //         const text = data.text;
+        // If the message contains only the workspace_id, set it for the client
+        if (data.workspace_id && !data.text) {
+            ws.workspaceId = data.workspace_id;
+        } else {
+            const workspaceId = ws.workspaceId;
+            const text = data.text;
 
-    //         // Broadcast the message to all clients in the same workspace
-    //         wss.clients.forEach((client) => {
-    //             if (client.readyState === WebSocket.OPEN && client.workspaceId === workspaceId) {
-    //                 client.send(JSON.stringify({ workspace_id: workspaceId, text: text }));
-    //             }
-    //         });
-    //     }
-    // });
+            // Broadcast the message to all clients in the same workspace
+            wss.clients.forEach((client) => {
+                if (client.readyState === WebSocket.OPEN && client.workspaceId === workspaceId) {
+                    client.send(JSON.stringify({ workspace_id: workspaceId, text: text }));
+                }
+            });
+        }
+    });
 
     ws.on('close', function () {
         console.log('stopping client interval');
