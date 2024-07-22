@@ -12,12 +12,6 @@ app.use(express.static(path.join(__dirname, '/public')));
 const server = createServer(app);
 const wss = new WebSocket.Server({ server });
 
-// Object to store the current state of each workspace
-// type WorkspaceState = {
-//     [workspaceId: string]: {
-//         [cellId: string]: string
-//     }
-// };
 const workspaceState = {
     'workspaceId': {
         'baseId': ['userId_1', 'userId_2']
@@ -53,7 +47,6 @@ wss.on('connection', function (ws) {
             ws.workspaceId = workspaceId;
 
             // Send the current state of the workspace changes to the client
-            console.log('Sending: ', JSON.stringify(workspaceState[workspaceId]))
             ws.send(JSON.stringify(workspaceState[workspaceId]));
         }
 
@@ -74,11 +67,19 @@ wss.on('connection', function (ws) {
             }
         } else if (status === 'update_workspace') {
             // Remove the user from the workspace
-            if (workspaceState[workspaceId]) {
+            // TODO: I don't think this works, because `workspaceId` now represents the latest workspace and not the previous workspace
+            // if (workspaceState[workspaceId]) {
+            //     Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
+            //         workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
+            //     });
+            // }
+
+            // Remove the user from all bases in all workspaces
+            Object.keys(workspaceState).forEach((workspaceId) => {
                 Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
                     workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
                 });
-            }
+            });
 
             // Add the user to the designated workspace
             if (workspaceId && userId) {
@@ -91,6 +92,18 @@ wss.on('connection', function (ws) {
                 Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
                     workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
                 });
+            }
+        }
+
+        // Cleanup workspaceState object when no users exist in any bases
+        if (workspaceState[workspaceId]) {
+            let userCount = 0;
+            Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
+                userCount += workspaceState[workspaceId][baseId].length;
+            });
+
+            if (userCount === 0) {
+                delete workspaceState[workspaceId];
             }
         }
 
