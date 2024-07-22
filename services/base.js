@@ -107,13 +107,15 @@ wss.on('connection', function (ws) {
             }
         }
 
+        console.log('Workspace State: ', JSON.stringify(workspaceState[ws.workspaceId]))
+
         wss.clients.forEach((client) => {
             if (/* Send to all clients in a ready state */
                 client.readyState === WebSocket.OPEN && 
                 /* Send to all clients in the same workspace */
-                client.workspaceId === workspaceId &&
+                client.workspaceId === workspaceId// &&
                 /* Send to all clients with a userId not of the message author */
-                client.userId !== userId
+                // client.userId !== userId
             ) {
                 client.send(JSON.stringify(workspaceState[ws.workspaceId]));
             }
