@@ -18,6 +18,28 @@ const workspaceState = {
     }
 };
 
+function updateWorkspace(workspaceId, baseId, userId) {
+    Object.keys(workspaceState).forEach((workspaceId) => {
+        Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
+            workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
+        });
+    });
+
+    const currentBaseId = baseId || '_none';
+    workspaceState[workspaceId][currentBaseId].push(userId);
+}
+
+function updateBase(workspaceId, baseId, userId) {
+    Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
+        workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
+    });
+
+    if (workspaceId && userId) {
+        const currentBaseId = baseId || '_none';
+        workspaceState[workspaceId][currentBaseId].push(userId);
+    }
+}
+
 wss.on('connection', function (ws) {
     // When a message event is received from any client
     ws.on('message', (message) => {
@@ -56,15 +78,17 @@ wss.on('connection', function (ws) {
                 workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
             }
         } else if (status === 'update_base') {
-            // Go through all other bases in this workspace and filter out the userId from those before adding to the current base
-            Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
-                workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
-            });
+            // // Go through all other bases in this workspace and filter out the userId from those before adding to the current base
+            // Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
+            //     workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
+            // });
 
-            if (workspaceId && userId) {
-                const currentBaseId = baseId || '_none';
-                workspaceState[workspaceId][currentBaseId].push(userId);
-            }
+            // if (workspaceId && userId) {
+            //     const currentBaseId = baseId || '_none';
+            //     workspaceState[workspaceId][currentBaseId].push(userId);
+            // }
+
+            updateBase(workspaceId, baseId, userId);
         } else if (status === 'update_workspace') {
             // Remove the user from the workspace
             // TODO: I don't think this works, because `workspaceId` now represents the latest workspace and not the previous workspace
@@ -75,26 +99,16 @@ wss.on('connection', function (ws) {
             // }
 
             // Remove the user from all bases in all workspaces
-            Object.keys(workspaceState).forEach((workspaceId) => {
-                Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
-                    workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
-                });
-            });
+            // Object.keys(workspaceState).forEach((workspaceId) => {
+            //     Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
+            //         workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
+            //     });
+            // });
 
-            // Add the user to the designated workspace
-            if (workspaceId && userId) {
-                const currentBaseId = baseId || '_none';
+            // const currentBaseId = baseId || '_none';
+            // workspaceState[workspaceId][currentBaseId].push(userId);
 
-                if (!workspaceState[workspaceId]) {
-                    workspaceState[workspaceId] = {};
-                }
-
-                if (!workspaceState[workspaceId][currentBaseId]) {
-                    workspaceState[workspaceId][currentBaseId] = [];
-                }
-
-                workspaceState[workspaceId][currentBaseId].push(userId);
-            }
+            updateWorkspace(workspaceId, baseId, userId);
         } else if (status === 'leave_workspace') {
             // Remove the user from the workspace
             if (workspaceState[workspaceId]) {
