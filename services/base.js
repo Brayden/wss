@@ -84,6 +84,15 @@ wss.on('connection', function (ws) {
             // Add the user to the designated workspace
             if (workspaceId && userId) {
                 const currentBaseId = baseId || '_none';
+
+                if (!workspaceState[workspaceId]) {
+                    workspaceState[workspaceId] = {};
+                }
+
+                if (!workspaceState[workspaceId][currentBaseId]) {
+                    workspaceState[workspaceId][currentBaseId] = [];
+                }
+
                 workspaceState[workspaceId][currentBaseId].push(userId);
             }
         } else if (status === 'leave_workspace') {
