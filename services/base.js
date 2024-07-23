@@ -118,7 +118,7 @@ wss.on('connection', function (ws) {
         //     }
         // }
 
-        console.log('Workspace State: ', JSON.stringify(workspaceState[ws.workspaceId]))
+        console.log('Workspace State: ', JSON.stringify(workspaceState[workspaceId]))
 
         wss.clients.forEach((client) => {
             if (/* Send to all clients in a ready state */
@@ -128,7 +128,7 @@ wss.on('connection', function (ws) {
                 /* Send to all clients with a userId not of the message author */
                 // client.userId !== userId
             ) {
-                client.send(JSON.stringify(workspaceState[ws.workspaceId]));
+                client.send(JSON.stringify(workspaceState[workspaceId]));
             }
         });
     });
