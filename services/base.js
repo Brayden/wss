@@ -105,6 +105,17 @@ wss.on('connection', function (ws) {
             ws.send(JSON.stringify(workspaceState[ws.workspaceId]));
         }
     });
+
+    ws.on('close', () => {
+        if (ws.userId) {
+            removeUserFromAllWorkspaces(ws.userId);
+            wss.clients.forEach((client) => {
+                if (client.readyState === WebSocket.OPEN && client.workspaceId) {
+                    client.send(JSON.stringify(workspaceState[client.workspaceId]));
+                }
+            });
+        }
+    });
 });
 
 server.listen(8080, function () {
