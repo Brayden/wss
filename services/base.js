@@ -60,6 +60,21 @@ function sendCurrentStatus(ws, workspaceId) {
     }
 }
 
+function cleanupWorkspace(workspaceId) {
+    if (!workspaceId) return
+    
+    Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
+        if (workspaceState[workspaceId][baseId].length === 0) {
+            delete workspaceState[workspaceId][baseId];
+        }
+    
+        if (Object.keys(workspaceState[workspaceId]).length === 0) {
+            delete workspaceState[workspaceId];
+        }
+    });
+}
+    
+
 wss.on('connection', function (ws) {
     ws.on('message', (message) => {
         const data = JSON.parse(message);
@@ -102,6 +117,8 @@ wss.on('connection', function (ws) {
                 }
             });
         }
+
+        cleanupWorkspace(workspaceId);
 
         console.log('State: ', status, userId, workspaceId, workspaceState);
     });
