@@ -88,6 +88,7 @@ wss.on('connection', function (ws) {
             } else if (status === 'leave_workspace') {
                 leaveWorkspace(workspaceId, userId);
             } else if (status === 'current_status') {
+                console.log('Sending current status: ', workspaceId);
                 sendCurrentStatus(ws, workspaceId);
             }
 
@@ -98,7 +99,7 @@ wss.on('connection', function (ws) {
             });
         }
 
-        console.log('State: ', status, workspaceState);
+        console.log('State: ', status, userId, workspaceId, workspaceState);
     });
 
     ws.on('open', () => {
