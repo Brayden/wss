@@ -35,6 +35,25 @@ function updateBase(workspaceId, baseId, userId) {
     }
 }
 
+function leaveBase(workspaceId, baseId, userId) {
+    const currentBaseId = baseId || '_none';
+    workspaceState[workspaceId][currentBaseId] = workspaceState[workspaceId][currentBaseId].filter((id) => id !== userId);
+}
+
+function leaveWorkspace(workspaceId, userId) {
+    if (workspaceState[workspaceId]) {
+        Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
+            workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
+        });
+    }
+}
+
+function sendCurrentStatus(ws, workspaceId) {
+    if (workspaceState[workspaceId]) {
+        ws.send(JSON.stringify(workspaceState[workspaceId]));
+    }
+}
+
 wss.on('connection', function (ws) {
     ws.on('message', (message) => {
         const data = JSON.parse(message);
@@ -64,20 +83,11 @@ wss.on('connection', function (ws) {
             } else if (status === 'update_base') {
                 updateBase(workspaceId, baseId, userId);
             } else if (status === 'leave_base') {
-                if (workspaceState[workspaceId] && workspaceState[workspaceId][baseId]) {
-                    workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
-                }
+                leaveBase(workspaceId, baseId, userId);
             } else if (status === 'leave_workspace') {
-                if (workspaceState[workspaceId]) {
-                    Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
-                        workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
-                    });
-                }
+                leaveWorkspace(workspaceId, userId);
             } else if (status === 'current_status') {
-                if (workspaceState[workspaceId]) {
-                    ws.send(JSON.stringify(workspaceState[workspaceId]));
-                }
-                return;
+                sendCurrentStatus(ws, workspaceId);
             }
 
             wss.clients.forEach((client) => {
@@ -86,6 +96,8 @@ wss.on('connection', function (ws) {
                 }
             });
         }
+
+        console.log('State: ', workspaceState);
     });
 
     ws.on('open', () => {
