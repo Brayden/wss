@@ -78,9 +78,25 @@ wss.on('connection', function (ws) {
                 workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
             }
         } else if (status === 'update_base') {
-            updateBase(workspaceId, baseId, userId);
+            // updateBase(workspaceId, baseId, userId);
+            Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
+                workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
+            });
+        
+            if (workspaceId && userId) {
+                const currentBaseId = baseId || '_none';
+                workspaceState[workspaceId][currentBaseId].push(userId);
+            }
         } else if (status === 'update_workspace') {
-            updateWorkspace(workspaceId, baseId, userId);
+            // updateWorkspace(workspaceId, baseId, userId);
+            Object.keys(workspaceState).forEach((workspaceId) => {
+                Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
+                    workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
+                });
+            });
+        
+            const currentBaseId = baseId || '_none';
+            workspaceState[workspaceId][currentBaseId].push(userId);
         } else if (status === 'leave_workspace') {
             // Remove the user from the workspace
             if (workspaceState[workspaceId]) {
