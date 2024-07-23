@@ -48,6 +48,12 @@ function leaveWorkspace(workspaceId, userId) {
     }
 }
 
+function removeUserFromAllWorkspaces(userId) {
+    Object.keys(workspaceState).forEach((workspaceId) => {
+        leaveWorkspace(workspaceId, userId);
+    });
+}
+
 function sendCurrentStatus(ws, workspaceId) {
     if (workspaceState[workspaceId]) {
         ws.send(JSON.stringify(workspaceState[workspaceId]));
