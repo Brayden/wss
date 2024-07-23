@@ -49,7 +49,6 @@ function leaveWorkspace(workspaceId, userId) {
 }
 
 function sendCurrentStatus(ws, workspaceId) {
-    console.log('Sending current status: ', workspaceId);
     if (workspaceState[workspaceId]) {
         ws.send(JSON.stringify(workspaceState[workspaceId]));
     }
@@ -88,7 +87,6 @@ wss.on('connection', function (ws) {
             } else if (status === 'leave_workspace') {
                 leaveWorkspace(workspaceId, userId);
             } else if (status === 'current_status') {
-                console.log('Sending current status: ', workspaceId);
                 sendCurrentStatus(ws, workspaceId);
             }
 
