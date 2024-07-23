@@ -78,36 +78,8 @@ wss.on('connection', function (ws) {
                 workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
             }
         } else if (status === 'update_base') {
-            // // Go through all other bases in this workspace and filter out the userId from those before adding to the current base
-            // Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
-            //     workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
-            // });
-
-            // if (workspaceId && userId) {
-            //     const currentBaseId = baseId || '_none';
-            //     workspaceState[workspaceId][currentBaseId].push(userId);
-            // }
-
             updateBase(workspaceId, baseId, userId);
         } else if (status === 'update_workspace') {
-            // Remove the user from the workspace
-            // TODO: I don't think this works, because `workspaceId` now represents the latest workspace and not the previous workspace
-            // if (workspaceState[workspaceId]) {
-            //     Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
-            //         workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
-            //     });
-            // }
-
-            // Remove the user from all bases in all workspaces
-            // Object.keys(workspaceState).forEach((workspaceId) => {
-            //     Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
-            //         workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
-            //     });
-            // });
-
-            // const currentBaseId = baseId || '_none';
-            // workspaceState[workspaceId][currentBaseId].push(userId);
-
             updateWorkspace(workspaceId, baseId, userId);
         } else if (status === 'leave_workspace') {
             // Remove the user from the workspace
@@ -119,16 +91,16 @@ wss.on('connection', function (ws) {
         }
 
         // Cleanup workspaceState object when no users exist in any bases
-        if (workspaceState[workspaceId]) {
-            let userCount = 0;
-            Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
-                userCount += workspaceState[workspaceId][baseId].length;
-            });
+        // if (workspaceState[workspaceId]) {
+        //     let userCount = 0;
+        //     Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
+        //         userCount += workspaceState[workspaceId][baseId].length;
+        //     });
 
-            if (userCount === 0) {
-                delete workspaceState[workspaceId];
-            }
-        }
+        //     if (userCount === 0) {
+        //         delete workspaceState[workspaceId];
+        //     }
+        // }
 
         console.log('Workspace State: ', JSON.stringify(workspaceState[ws.workspaceId]))
 
