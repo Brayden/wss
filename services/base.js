@@ -98,7 +98,7 @@ wss.on('connection', function (ws) {
             });
         }
 
-        console.log('State: ', workspaceState);
+        console.log('State: ', status, workspaceState);
     });
 
     ws.on('open', () => {
