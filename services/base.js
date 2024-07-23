@@ -104,6 +104,13 @@ wss.on('connection', function (ws) {
                     workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
                 });
             }
+        } else if (status === 'current_status') {
+            // Send the current state of the workspace changes to the client
+            if (workspaceState[ws.workspaceId]) {
+                ws.send(JSON.stringify(workspaceState[ws.workspaceId]));
+            }
+
+            return;
         }
 
         // Cleanup workspaceState object when no users exist in any bases
