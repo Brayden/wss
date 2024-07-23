@@ -106,10 +106,10 @@ wss.on('connection', function (ws) {
             }
         } else if (status === 'current_status') {
             // Send the current state of the workspace changes to the client
-            console.log('requested current status: ', ws.workspaceId)
-            if (workspaceState[ws.workspaceId]) {
-                console.log('sending current status: ', JSON.stringify(workspaceState[ws.workspaceId]))
-                ws.send(JSON.stringify(workspaceState[ws.workspaceId]));
+            console.log('requested current status: ', workspaceId)
+            if (workspaceState[workspaceId]) {
+                console.log('sending current status: ', JSON.stringify(workspaceState[workspaceId]))
+                ws.send(JSON.stringify(workspaceState[workspaceId]));
             }
 
             return;
