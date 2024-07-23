@@ -69,7 +69,7 @@ wss.on('connection', function (ws) {
             ws.workspaceId = workspaceId;
 
             // Send the current state of the workspace changes to the client
-            ws.send(JSON.stringify(workspaceState[workspaceId]));
+            // ws.send(JSON.stringify(workspaceState[workspaceId]));
         }
 
         if (status === 'leave_base') {
