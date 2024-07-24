@@ -62,7 +62,7 @@ function sendCurrentStatus(ws, workspaceId) {
 
 function cleanupWorkspace(workspaceId) {
     if (!workspaceId) return
-    
+
     Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
         if (workspaceState[workspaceId][baseId].length === 0) {
             delete workspaceState[workspaceId][baseId];
@@ -71,6 +71,12 @@ function cleanupWorkspace(workspaceId) {
         if (Object.keys(workspaceState[workspaceId]).length === 0) {
             delete workspaceState[workspaceId];
         }
+    });
+}
+
+function cleanupAllWorkspaces() {
+    Object.keys(workspaceState).forEach((workspaceId) => {
+        cleanupWorkspace(workspaceId);
     });
 }
     
@@ -143,4 +149,7 @@ wss.on('connection', function (ws) {
 
 server.listen(8080, function () {
     console.log('Listening on http://0.0.0.0:8080 from base.js');
+    
+    // Every 5 minutes cleanup all workspaces
+    setInterval(cleanupAllWorkspaces, 300000);
 });
