@@ -42,7 +42,7 @@ function leaveBase(workspaceId, baseId, userId) {
 
 function updateBoard(workspaceId, boardId, userId) {    
     Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
-        workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
+        workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId]?.filter((id) => id !== userId);
     });
 
     if (workspaceId && userId) {
@@ -55,7 +55,7 @@ function updateBoard(workspaceId, boardId, userId) {
 function leaveBoard(workspaceId, boardId, userId) {
     const boardIdentifier = `board|${boardId}`
     const currentBaseId = boardId ? boardIdentifier : '_none';
-    workspaceState[workspaceId][currentBaseId] = workspaceState[workspaceId][currentBaseId].filter((id) => id !== userId);
+    workspaceState[workspaceId][currentBaseId] = workspaceState[workspaceId][currentBaseId]?.filter((id) => id !== userId);
 }
 
 function leaveWorkspace(workspaceId, userId) {
