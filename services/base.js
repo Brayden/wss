@@ -48,6 +48,9 @@ function updateBoard(workspaceId, boardId, userId) {
     if (workspaceId && userId) {
         const boardIdentifier = `board|${boardId}`
         const currentBoardId = boardId ? boardIdentifier : '_none';
+        if (!workspaceState[workspaceId][currentBoardId]) {
+            workspaceState[workspaceId][currentBoardId] = []
+        }
         workspaceState[workspaceId][currentBoardId]?.push(userId);
 
         console.log('Updating Board: ', workspaceId, currentBoardId, userId)
