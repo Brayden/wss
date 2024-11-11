@@ -40,6 +40,24 @@ function leaveBase(workspaceId, baseId, userId) {
     workspaceState[workspaceId][currentBaseId] = workspaceState[workspaceId][currentBaseId].filter((id) => id !== userId);
 }
 
+function updateBoard(workspaceId, boardId, userId) {    
+    Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
+        workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
+    });
+
+    if (workspaceId && userId) {
+        const boardIdentifier = `board|${boardId}`
+        const currentBaseId = boardId ? boardIdentifier : '_none';
+        workspaceState[workspaceId][currentBaseId].push(userId);
+    }
+}
+
+function leaveBoard(workspaceId, boardId, userId) {
+    const boardIdentifier = `board|${boardId}`
+    const currentBaseId = boardId ? boardIdentifier : '_none';
+    workspaceState[workspaceId][currentBaseId] = workspaceState[workspaceId][currentBaseId].filter((id) => id !== userId);
+}
+
 function leaveWorkspace(workspaceId, userId) {
     if (workspaceState[workspaceId]) {
         Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
@@ -87,13 +105,14 @@ wss.on('connection', function (ws) {
         const userId = data.user_id || ws.userId;
         const workspaceId = data.workspace_id || ws.workspaceId;
         const baseId = data.base_id;
+        const boardId = data.board_id;
         const status = data.status;
 
         if (!workspaceState[workspaceId]) {
             workspaceState[workspaceId] = {};
         }
 
-        if (workspaceId && baseId && !workspaceState[workspaceId][baseId]) {
+        if (workspaceId && (baseId || boardId) && !workspaceState[workspaceId][baseId]) {
             workspaceState[workspaceId][baseId] = [];
         }
 
@@ -111,6 +130,10 @@ wss.on('connection', function (ws) {
                 updateBase(workspaceId, baseId, userId);
             } else if (status === 'leave_base') {
                 leaveBase(workspaceId, baseId, userId);
+            } else if (status === 'update_board') {
+                updateBoard(workspaceId, boardId, userId);
+            } else if (status === 'leave_board') {
+                leaveBoard(workspaceId, boardId, userId);
             } else if (status === 'leave_workspace') {
                 leaveWorkspace(workspaceId, userId);
             } else if (status === 'current_status') {
@@ -127,6 +150,13 @@ wss.on('connection', function (ws) {
         cleanupWorkspace(workspaceId);
 
         console.log('State: ', status, userId, workspaceId, workspaceState);
+        console.log('Board: ', boardId)
+
+        // State:  current_status 70c8984e-e765-4be5-8d26-eceecfb672bb admin {
+        //     [wss] [2024-11-10 19:43:15]   undefined: {},
+        //     [wss] [2024-11-10 19:43:15]   '-est': { _none: [ '7986839c-d7ef-48c5-a043-8f7c0aec5f37' ] },
+        //     [wss] [2024-11-10 19:43:15]   admin: { _none: [ '70c8984e-e765-4be5-8d26-eceecfb672bb' ] }
+        //     [wss] [2024-11-10 19:43:15] }
     });
 
     ws.on('open', () => {
