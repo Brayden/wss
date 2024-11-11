@@ -50,6 +50,9 @@ function updateBoard(workspaceId, boardId, userId) {
         const currentBaseId = boardId ? boardIdentifier : '_none';
         workspaceState[workspaceId][currentBaseId]?.push(userId);
     }
+
+    console.log('Updating Board: ', workspaceId, currentBaseId, userId)
+    console.log('Board States: ', workspaceState[workspaceId][currentBaseId])
 }
 
 function leaveBoard(workspaceId, boardId, userId) {
