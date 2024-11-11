@@ -16,7 +16,7 @@ const workspaceState = {};
 function updateWorkspace(workspaceId, baseId, userId) {
     Object.keys(workspaceState).forEach((workspaceId) => {
         Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
-            workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
+            workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId]?.filter((id) => id !== userId);
         });
     });
 
@@ -26,18 +26,18 @@ function updateWorkspace(workspaceId, baseId, userId) {
 
 function updateBase(workspaceId, baseId, userId) {
     Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
-        workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
+        workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId]?.filter((id) => id !== userId);
     });
 
     if (workspaceId && userId) {
         const currentBaseId = baseId || '_none';
-        workspaceState[workspaceId][currentBaseId].push(userId);
+        workspaceState[workspaceId][currentBaseId]?.push(userId);
     }
 }
 
 function leaveBase(workspaceId, baseId, userId) {
     const currentBaseId = baseId || '_none';
-    workspaceState[workspaceId][currentBaseId] = workspaceState[workspaceId][currentBaseId].filter((id) => id !== userId);
+    workspaceState[workspaceId][currentBaseId] = workspaceState[workspaceId][currentBaseId]?.filter((id) => id !== userId);
 }
 
 function updateBoard(workspaceId, boardId, userId) {    
@@ -61,7 +61,7 @@ function leaveBoard(workspaceId, boardId, userId) {
 function leaveWorkspace(workspaceId, userId) {
     if (workspaceState[workspaceId]) {
         Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
-            workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId].filter((id) => id !== userId);
+            workspaceState[workspaceId][baseId] = workspaceState[workspaceId][baseId]?.filter((id) => id !== userId);
         });
     }
 }
@@ -82,7 +82,7 @@ function cleanupWorkspace(workspaceId) {
     if (!workspaceId) return
 
     Object.keys(workspaceState[workspaceId]).forEach((baseId) => {
-        if (workspaceState[workspaceId][baseId].length === 0) {
+        if (workspaceState[workspaceId][baseId]?.length === 0) {
             delete workspaceState[workspaceId][baseId];
         }
     
