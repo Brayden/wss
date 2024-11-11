@@ -47,12 +47,12 @@ function updateBoard(workspaceId, boardId, userId) {
 
     if (workspaceId && userId) {
         const boardIdentifier = `board|${boardId}`
-        const currentBaseId = boardId ? boardIdentifier : '_none';
-        workspaceState[workspaceId][currentBaseId]?.push(userId);
-    }
+        const currentBoardId = boardId ? boardIdentifier : '_none';
+        workspaceState[workspaceId][currentBoardId]?.push(userId);
 
-    console.log('Updating Board: ', workspaceId, currentBaseId, userId)
-    console.log('Board States: ', workspaceState[workspaceId][currentBaseId])
+        console.log('Updating Board: ', workspaceId, currentBoardId, userId)
+        console.log('Board States: ', workspaceState[workspaceId][currentBaseId])
+    }
 }
 
 function leaveBoard(workspaceId, boardId, userId) {
