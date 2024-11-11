@@ -51,7 +51,7 @@ function updateBoard(workspaceId, boardId, userId) {
         workspaceState[workspaceId][currentBoardId]?.push(userId);
 
         console.log('Updating Board: ', workspaceId, currentBoardId, userId)
-        console.log('Board States: ', workspaceState[workspaceId][currentBaseId])
+        console.log('Board States: ', workspaceState[workspaceId][currentBoardId])
     }
 }
 
